@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    container_name: nodejs-api
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=myapp
+      - DB_USER=apiuser
+      - DB_PASSWORD=secret
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "node", "healthcheck.js"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=myapp
+      - POSTGRES_USER=apiuser
+      - POSTGRES_PASSWORD=secret
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U apiuser"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
