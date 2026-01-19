@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Isolation Demo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🔒 Docker Network Isolation Demo</h1>
+        <p class="subtitle">Testing network segmentation and security</p>
+
+        <div class="card">
+            <h2>Test API Connection</h2>
+            <button onclick="testAPI()">Test Backend API</button>
+            <div id="api-result" class="result"></div>
+        </div>
+
+        <div class="card">
+            <h2>Network Architecture</h2>
+            <div class="architecture">
+                <div class="layer">
+                    <span class="badge public">Public</span>
+                    <p>Nginx Reverse Proxy (Port 80)</p>
+                </div>
+                <div class="arrow">↓</div>
+                <div class="layer">
+                    <span class="badge protected">Protected</span>
+                    <p>Frontend (This Page)</p>
+                </div>
+                <div class="arrow">↓</div>
+                <div class="layer">
+                    <span class="badge protected">Protected</span>
+                    <p>Backend API</p>
+                </div>
+                <div class="arrow">↓</div>
+                <div class="layer">
+                    <span class="badge isolated">Isolated</span>
+                    <p>Database + Cache (No external access)</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>What's Happening?</h2>
+            <ul>
+                <li>✅ You can access this page (through Nginx)</li>
+                <li>✅ This page can call the API (backend-network)</li>
+                <li>✅ API can access database (database-network)</li>
+                <li>❌ You CANNOT directly access the database</li>
+                <li>❌ Nginx CANNOT directly access the database</li>
+                <li>❌ Database CANNOT access the internet</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>Security Benefits</h2>
+            <div class="benefits">
+                <div class="benefit">
+                    <span class="icon">🛡️</span>
+                    <h3>Defense in Depth</h3>
+                    <p>Multiple layers protect sensitive data</p>
+                </div>
+                <div class="benefit">
+                    <span class="icon">🔐</span>
+                    <h3>Least Privilege</h3>
+                    <p>Each service only accesses what it needs</p>
+                </div>
+                <div class="benefit">
+                    <span class="icon">🚧</span>
+                    <h3>Attack Surface Reduction</h3>
+                    <p>Database never exposed to internet</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function testAPI() {
+            const resultDiv = document.getElementById('api-result');
+            resultDiv.innerHTML = '⏳ Testing connection...';
+            
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        ✅ Success! API Response:<br>
+                        <code>${JSON.stringify(data, null, 2)}</code>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        ❌ Error: ${error.message}
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
