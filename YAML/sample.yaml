@@ -1,0 +1,22 @@
+#comments look like this
+key: value
+another_key: another_value
+a_number_value: 42
+
+#nesting using intendaton
+parent_key:
+  child_key1: child_value1
+  child_key2: child_value2
+  another_nested_key:
+    sub_child_key: sub_child_value
+
+#sequence (list) representation
+list_key:
+  - list_item1
+  - list_item2
+  - list_item3
+
+#json like
+
+json_map: {"key1": "value1", "key2": "value2"}  
+json_seq: [3, 2, 1, "item1", "item2", "item3"]
